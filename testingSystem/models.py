@@ -3,7 +3,29 @@ from django.db import models
 from django.utils import timezone
 
 
-class User(models.Model):
-    user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
-    created_date = models.DateTimeField(
-        default=timezone.now)
+class Variant(models.Model):
+    description = models.TextField()
+
+    def __str__(self):
+        return self.description
+
+
+class Question(models.Model):
+    title = models.CharField(max_length=128, null=True, blank=True)
+    description = models.TextField()
+    right_answer = models.ForeignKey(Variant, related_name='right')
+
+    variants = models.ManyToManyField(Variant)
+
+    def __str__(self):
+        return self.title
+
+
+class Test(models.Model):
+    title = models.CharField(max_length=128)
+    date_create = models.DateTimeField(default=timezone.now)
+
+    questions = models.ManyToManyField(Question)
+
+    def __str__(self):
+        return self.title
